@@ -112,7 +112,7 @@
           <button
             class="btn btn-primary"
             href="javascript: void(0)"
-            :click="downloadInducedSubtreeFromOpenTreeOfLife(ottIdsForAllSpecifiers)"
+            @click="downloadInducedSubtreeFromOpenTreeOfLife(ottIdsForAllSpecifiers)"
           >
             Download induced subtree from the Open Tree of Life
           </button>
