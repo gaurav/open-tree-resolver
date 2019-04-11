@@ -1,85 +1,155 @@
 <template>
-  <div class="card border-dark">
-    <h5 class="card-header border-dark">
-      Phyloreferences
-    </h5>
-    <div class="card-body p-0">
-      <table class="table table-hover table-flush">
-        <thead>
-          <th width="15%">Name</th>
-          <th width="40%">Description</th>
-          <th>Specifiers</th>
-          <th>Open Tree Taxonomy ID</th>
-        </thead>
-        <tbody>
-          <tr
-            v-if="loadedPhylorefs.length === 0"
-            class="bg-white"
-          >
-            <td colspan="4">
-              <center><em>No phyloreferences loaded</em></center>
-            </td>
-          </tr>
-          <template v-for="(phyloref, phylorefIndex) of loadedPhylorefs">
-            <tr :key="phylorefIndex"><!-- This :key only works as long as users can't reorder the phylorefs -->
-              <td :rowspan="getSpecifiersForPhyloref(phyloref).length + 1">
-                {{ phyloref.label || `Phyloref ${phylorefIndex + 1}` }}
-              </td>
-              <td :rowspan="getSpecifiersForPhyloref(phyloref).length + 1">
-                <span v-html="getPhylorefDescription(phyloref)"></span>
+  <div>
+    <div class="card border-dark">
+      <h5 class="card-header border-dark">
+        Phyloreferences
+      </h5>
+      <div class="card-body p-0">
+        <table class="table table-hover table-flush">
+          <thead>
+            <th width="15%">Name</th>
+            <th width="40%">Description</th>
+            <th>Specifiers</th>
+            <th>Open Tree Taxonomy ID</th>
+          </thead>
+          <tbody>
+            <tr
+              v-if="loadedPhylorefs.length === 0"
+              class="bg-white"
+            >
+              <td colspan="4">
+                <center><em>No phyloreferences loaded</em></center>
               </td>
             </tr>
-            <template v-for="specifier of getSpecifiersForPhyloref(phyloref)">
-              <tr :key="'phyloref' + phylorefIndex + ', specifier: ' + getLabelForSpecifier(specifier)">
-                <td>{{getSpecifierType(phyloref, specifier)}} <span v-html="getLabelForSpecifierAsHTML(specifier)"></span></td>
-                <td>
-                  <template v-if="getOpenTreeTaxonomyID(specifier)">
-                    <a target="_blank" :href="'https://tree.opentreeoflife.org/opentree/@ott' + getOpenTreeTaxonomyID(specifier)">{{getOpenTreeTaxonomyID(specifier)}}</a>
-                    (<a target="_blank" :href="'https://tree.opentreeoflife.org/taxonomy/browse?id=' + getOpenTreeTaxonomyID(specifier)">ott</a>)
-                  </template>
+            <template v-for="(phyloref, phylorefIndex) of loadedPhylorefs">
+              <tr :key="phylorefIndex"><!-- This :key only works as long as users can't reorder the phylorefs -->
+                <td :rowspan="getSpecifiersForPhyloref(phyloref).length + 1">
+                  {{ phyloref.label || `Phyloref ${phylorefIndex + 1}` }}
+                </td>
+                <td :rowspan="getSpecifiersForPhyloref(phyloref).length + 1">
+                  <span v-html="getPhylorefDescription(phyloref)"></span>
                 </td>
               </tr>
+              <template v-for="specifier of getSpecifiersForPhyloref(phyloref)">
+                <tr :key="'phyloref' + phylorefIndex + ', specifier: ' + getLabelForSpecifier(specifier)">
+                  <td>{{getSpecifierType(phyloref, specifier)}} <span v-html="getLabelForSpecifierAsHTML(specifier)"></span></td>
+                  <td>
+                    <template v-if="getOpenTreeTaxonomyID(specifier)">
+                      <a target="_blank" :href="'https://tree.opentreeoflife.org/opentree/@ott' + getOpenTreeTaxonomyID(specifier)">{{getOpenTreeTaxonomyID(specifier)}}</a>
+                      (<a target="_blank" :href="'https://tree.opentreeoflife.org/taxonomy/browse?id=' + getOpenTreeTaxonomyID(specifier)">ott</a>)
+                    </template>
+                  </td>
+                </tr>
+              </template>
             </template>
-          </template>
-        </tbody>
-      </table>
-    </div>
-    <div class="card-footer">
-      <div class="btn-group" role="group" area-label="Add phyloreferences">
-        <button
-          class="btn btn-primary"
-          href="javascript: void(0)"
-          onclick="$('#load-jsonld').trigger('click')"
-        >
-          Add phyloreferences from JSON-LD file
-        </button>
-        <input
-          id="load-jsonld"
-          type="file"
-          multiple="true"
-          class="d-none"
-          @change="loadJSONLDFromFileInputById('#load-jsonld')"
-        >
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="addFromExamples" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Add phyloreferences from example
-        </button>
-        <div class="dropdown-menu" aria-labelledby="addFromExamples">
-          <a href="javascript:;" class="dropdown-item" v-for="example of exampleJSONLDURLs" v-bind:key="example.url" @click="loadJSONLDFromURL(example.url)">
-            {{example.title}}
-          </a>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer">
+        <div class="btn-group" role="group" area-label="Add phyloreferences">
+          <button
+            class="btn btn-primary"
+            href="javascript: void(0)"
+            onclick="$('#load-jsonld').trigger('click')"
+          >
+            Add phyloreferences from JSON-LD file
+          </button>
+          <input
+            id="load-jsonld"
+            type="file"
+            multiple="true"
+            class="d-none"
+            @change="loadJSONLDFromFileInputById('#load-jsonld')"
+          >
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="addFromExamples" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Add phyloreferences from example
+          </button>
+          <div class="dropdown-menu" aria-labelledby="addFromExamples">
+            <a href="javascript:;" class="dropdown-item" v-for="example of exampleJSONLDURLs" v-bind:key="example.url" @click="loadJSONLDFromURL(example.url)">
+              {{example.title}}
+            </a>
+          </div>
+        </div>
+        <div class="btn-group ml-2" role="group" area-label="Edit phyloreference list">
+          <button class="btn btn-danger" type="button" @click="loadedPhylorefs = []">
+            Clear phylorefs
+          </button>
+        </div>
+        <div class="btn-group ml-2" role="group" area-label="Open Tree Taxonomy tasks">
+          <button class="btn btn-primary" type="button" @click="queryOpenTreeTaxonomyIDs()">
+            Query specifiers against Open Tree of Life Taxonomy
+          </button>
         </div>
       </div>
-      <div class="btn-group ml-2" role="group" area-label="Edit phyloreference list">
-        <button class="btn btn-danger" type="button" @click="loadedPhylorefs = []">
-          Clear phylorefs
-        </button>
+    </div>
+
+    <div class="card border-dark mt-2">
+      <h5 class="card-header border-dark">
+        Phylogeny
+      </h5>
+      <div class="card-body">
+        <form>
+          <div class="form-group row">
+            <label
+              for="newick"
+              class="col-md-2 control-label"
+            >
+              Newick
+            </label>
+            <div class="col-md-10 input-group">
+              <textarea
+                v-model.lazy="newick"
+                rows="3"
+                class="form-control"
+                placeholder="Enter Newick string for phylogeny here"
+              />
+            </div>
+          </div>
+        </form>
       </div>
-      <div class="btn-group ml-2" role="group" area-label="Open Tree Taxonomy tasks">
-        <button class="btn btn-primary" type="button" @click="queryOpenTreeTaxonomyIDs()">
-          Query specifiers against Open Tree of Life Taxonomy
-        </button>
+      <div class="card-footer">
+        <div class="btn-group" role="group" area-label="Look up trees on the Open Tree of Life">
+          <button
+            class="btn btn-primary"
+            href="javascript: void(0)"
+            :click="downloadInducedSubtreeFromOpenTreeOfLife(ottIdsForAllSpecifiers)"
+          >
+            Download induced subtree from the Open Tree of Life
+          </button>
+        </div>
       </div>
     </div>
+
+    <!-- Display the list of errors encountered when parsing this Newick string -->
+    <div
+      v-if="phylogenyNewickErrors.length !== 0"
+      class="card border-dark mt-2"
+    >
+      <h5 class="card-header bg-danger">
+        Errors occurred while parsing Newick string
+      </h5>
+      <div class="card-body">
+        <template v-for="(error, errorIndex) of phylogenyNewickErrors">
+          <p><strong>{{ error.title }}.</strong> {{ error.message }}</p>
+        </template>
+      </div>
+    </div>
+
+    <!-- Display the phylogeny (unless there were Newick parsing errors) -->
+    <div
+      v-if="phylogenyNewickErrors.length === 0"
+      class="card border-dark mt-2"
+    >
+      <h5 class="card-header">
+        Phylogeny visualization
+      </h5>
+      <div class="card-body">
+        <Phylotree
+          :newick="newick"
+        />
+      </div>
+    </div>
+    
   </div>
 </template>
 
@@ -92,15 +162,21 @@
 import { has, isEqual, uniq, chunk } from 'lodash';
 import Vue from 'vue';
 import jQuery from 'jquery';
-import { PhylorefWrapper } from '@phyloref/phyx';
+import { PhylorefWrapper, PhylogenyWrapper } from '@phyloref/phyx';
+
+import Phylotree from './phylogeny/Phylotree.vue';
 
 export default {
   name: 'PhylorefTable',
+  components: {
+    Phylotree,
+  },
   data: function () {
     return {
       flagDisplayExpression: false,
       loadedPhylorefs: [],
       openTreeTaxonomyInfoByName: {},
+      newick: '()',
     };
   },
   computed: {
@@ -109,6 +185,19 @@ export default {
     },
     phylorefsWithMoreThanOneSpecifier() {
       return this.loadedPhylorefs.filter(phyloref => (this.getSpecifiersForPhyloref(phyloref) || []).length > 1);
+    },
+    ottIdsForAllSpecifiers() {
+      // Assumes that queryOpenTreeTaxonomyIDs has already been called!
+      const ottIds = this.allSpecifiers.map(specifier => this.getOpenTreeTaxonomyID(specifier))
+        .filter(x => x !== undefined && x !== null);
+      return ottIds;
+    },
+    phylogenyNewickErrors() {
+      const errors = PhylogenyWrapper.getErrorsInNewickString(this.newick);
+
+      // For historical reason, we consider an empty Newick string as an error.
+      // We should not do this.
+      return errors.filter(error => error.title !== 'No phylogeny entered');
     },
     exampleJSONLDURLs() { return [
       // Returns a list of example files to display in the "Examples" menu.
@@ -127,6 +216,47 @@ export default {
     ]}
   },
   methods: {
+    downloadInducedSubtreeFromOpenTreeOfLife(ottIds) {
+      if(ottIds.length === 0) return;
+
+      // Induced subtree approach
+      jQuery.ajax({
+        type: 'POST',
+        url: 'https://ot39.opentreeoflife.org/v3/tree_of_life/induced_subtree',
+        data: JSON.stringify({
+          ott_ids: ottIds,
+        }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: (data) => {
+          this.newick = data.newick;
+        },
+      })
+        .fail(x => {
+          if(x.responseJSON.message === "[/v3/tree_of_life/induced_subtree] Error: Nodes not found!") {
+            const unknownOttIds = x.responseJSON.unknown;
+            console.log("The Open Tree synthetic tree does not contain the following nodes: ", unknownOttIds);
+            const knownOttIds = ottIds.filter(id => !has(unknownOttIds, "ott" + id));
+            console.log("Query has been reduced to the following nodes: ", knownOttIds);
+            // Redo query without unknown OTT Ids.
+            jQuery.ajax({
+              type: 'POST',
+              url: 'https://ot39.opentreeoflife.org/v3/tree_of_life/induced_subtree',
+              data: JSON.stringify({
+                ott_ids: knownOttIds,
+              }),
+              contentType: 'application/json; charset=utf-8',
+              dataType: 'json',
+              success: (data) => {
+                this.newick = data.newick;
+              },
+            }).fail(x => console.log("Error accessing Open Tree induced_subtree", x));
+          } else {
+            console.log("Error accessing Open Tree induced_subtree", x);
+          }
+        });
+    },
+
     getPhylorefDescription(phyloref) {
       const description = phyloref.cladeDefinition || phyloref['obo:IAO_0000115'] || 'None';
 
