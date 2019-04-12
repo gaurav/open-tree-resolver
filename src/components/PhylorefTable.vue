@@ -8,9 +8,9 @@
         <table class="table table-hover table-flush">
           <thead>
             <th width="15%">Name</th>
-            <th width="40%">Description</th>
+            <th width="25%">Description</th>
             <th>Resolved Open Tree node</th>
-            <th>Specifiers</th>
+            <th width="30%">Specifiers</th>
             <th>Open Tree Taxonomy ID</th>
           </thead>
           <tbody>
@@ -18,7 +18,7 @@
               v-if="loadedPhylorefs.length === 0"
               class="bg-white"
             >
-              <td colspan="4">
+              <td colspan="5">
                 <center><em>No phyloreferences loaded</em></center>
               </td>
             </tr>
@@ -59,7 +59,7 @@
             href="javascript: void(0)"
             onclick="$('#load-jsonld').trigger('click')"
           >
-            Add phyloreferences from JSON-LD file
+            Add from JSON-LD file
           </button>
           <input
             id="load-jsonld"
@@ -69,7 +69,7 @@
             @change="loadJSONLDFromFileInputById('#load-jsonld')"
           >
           <button class="btn btn-secondary dropdown-toggle" type="button" id="addFromExamples" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Add phyloreferences from example
+            Add from example file
           </button>
           <div class="dropdown-menu" aria-labelledby="addFromExamples">
             <a href="javascript:;" class="dropdown-item" v-for="example of exampleJSONLDURLs" v-bind:key="example.url" @click="loadJSONLDFromURL(example.url)">
@@ -79,12 +79,12 @@
         </div>
         <div class="btn-group ml-2" role="group" area-label="Edit phyloreference list">
           <button class="btn btn-danger" type="button" @click="loadedPhylorefs = []">
-            Clear phylorefs
+            Clear phyloreferences
           </button>
         </div>
         <div class="btn-group ml-2" role="group" area-label="Open Tree Taxonomy tasks">
           <button class="btn btn-primary" type="button" @click="queryOpenTreeTaxonomyIDs()">
-            Query specifiers against Open Tree of Life Taxonomy
+            Look up Open Tree of Life Taxonomy IDs
           </button>
         </div>
       </div>
@@ -370,7 +370,7 @@ export default {
       // Disable "Reason" buttons so they can't be reused.
       this.reasoningInProgress = true;
       this.reasoningResults = {};
-      
+
       jQuery.post('http://localhost:34214/reason', {
         // This will convert the JSON-LD file into an application/x-www-form-urlencoded
         // string (see https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings under
